@@ -40,7 +40,7 @@ See [the official documentation](https://docs.godotengine.org/en/stable/) for ad
 
 ## Contributing
 
-This part was taken from https://github.com/c2i-junia/rustcraft?tab=readme-ov-file#contributing
+This part was taken from the [rustcraft README.md](https://github.com/c2i-junia/rustcraft?tab=readme-ov-file#contributing)
 
 ### Guidelines
 
