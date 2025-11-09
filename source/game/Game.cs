@@ -1,9 +1,16 @@
 using Godot;
-using System;
 
-public partial class Game : Node {
+public partial class Game : Node
+{
+	public override void _Ready()
+	{
+		var player = GetNode<Player>("Player");
+		var world = GetNode<World>("World");
+		player.SetWorld(world);
+	}
 	
-	void OnStartGame() {
+	void OnStartGame()
+	{
 		GD.Print("Hello world");
 	}
 }

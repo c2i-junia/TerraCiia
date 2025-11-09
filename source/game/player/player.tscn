@@ -1,7 +1,7 @@
 [gd_scene load_steps=26 format=3 uid="uid://6i56dgbkwktm"]
 
 [ext_resource type="Script" uid="uid://b3j3bjlc88vvm" path="res://source/game/player/Player.cs" id="1_vknay"]
-[ext_resource type="Texture2D" uid="uid://da5jj60a22dd7" path="res://assets/de1.png" id="2_vknay"]
+[ext_resource type="Texture2D" uid="uid://da5jj60a22dd7" path="res://assets/textures/de1.png" id="2_vknay"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bw7w5"]
 atlas = ExtResource("2_vknay")
@@ -169,17 +169,17 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oksla"]
-size = Vector2(54, 55)
+size = Vector2(29, 31)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_vknay")
 metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-scale = Vector2(5, 5)
+scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_vknay")
 animation = &"walk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 2.5)
+position = Vector2(1.5, 2.5)
 shape = SubResource("RectangleShape2D_oksla")

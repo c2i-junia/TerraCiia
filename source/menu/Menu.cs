@@ -1,12 +1,12 @@
 using Godot;
-using System;
 
-public partial class Menu : Node {
-	
+public partial class Menu : Node
+{
 	[Signal]
 	public delegate void StartGameEventHandler();
-	
-	private void OnStartButtonPressed() {
+
+	private void OnStartButtonPressed()
+	{
 		GetNode<Label>("Title").Hide();
 		GetNode<Button>("StartButton").Hide();
 		EmitSignal(SignalName.StartGame);
