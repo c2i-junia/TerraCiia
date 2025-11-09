@@ -2,28 +2,39 @@ using Godot;
 
 public partial class Player : CharacterBody2D
 {
-	public const float Speed = 300.0f;
-	public const float JumpVelocity = -400.0f;
+	// ----- Attributs ----- //
 
-	[Export] private float clickCooldown = 0.1f;
+	[Export] private float _speed = 300.0f;
+	[Export] private float _jumpVelocity = -400.0f;
 
+	[Export] private float _clickCooldown = 0.1f;
 	private double _lastClickTime = 0;
-
-	[Export] private NodePath _worldPath;
 	[Export] private float _interactionRange = 10000f;
 
 	private World _world;
+	private AnimatedSprite2D _animatedSprite2D;
+
+
+	// ----- Getters ----- //
+
+
+	// ----- Setters ----- //
+
+	public void SetWorld(World world) { _world = world; }
+
+
+	// ----- Override Godot Methods ----- //
 
 	public override void _Ready()
 	{
-		var animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-		animatedSprite2D.Play();
+		_animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		_animatedSprite2D.Play();
 	}
+
 
 	public override void _PhysicsProcess(double delta)
 	{
 		Vector2 velocity = Velocity;
-		var animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 
 		// Add the gravity.
 		if (!IsOnFloor())
@@ -34,7 +45,7 @@ public partial class Player : CharacterBody2D
 		// Handle Jump.
 		if (Input.IsActionJustPressed("jump") && IsOnFloor())
 		{
-			velocity.Y = JumpVelocity;
+			velocity.Y = _jumpVelocity;
 		}
 
 		// Get the input direction and handle the movement/deceleration.
@@ -50,14 +61,14 @@ public partial class Player : CharacterBody2D
 
 		if (direction != Vector2.Zero)
 		{
-			velocity.X = direction.X * Speed;
-			animatedSprite2D.Animation = "walk";
-			animatedSprite2D.FlipH = velocity.X < 0;
+			velocity.X = direction.X * _speed;
+			_animatedSprite2D.Animation = "walk";
+			_animatedSprite2D.FlipH = velocity.X < 0;
 		}
 		else
 		{
-			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
-			animatedSprite2D.Animation = "idle";
+			velocity.X = Mathf.MoveToward(Velocity.X, 0, _speed);
+			_animatedSprite2D.Animation = "idle";
 		}
 
 
@@ -65,12 +76,13 @@ public partial class Player : CharacterBody2D
 		MoveAndSlide();
 	}
 
+
 	public override void _Process(double delta)
 	{
 		// Handle use
 		if (Input.IsActionPressed("use"))
 		{
-			if (Time.GetTicksMsec() - _lastClickTime < clickCooldown * 1000) return;
+			if (Time.GetTicksMsec() - _lastClickTime < _clickCooldown * 1000) return;
 			_lastClickTime = Time.GetTicksMsec();
 
 			Vector2 mouseWorldPos = GetGlobalMousePosition();
@@ -85,19 +97,11 @@ public partial class Player : CharacterBody2D
 
 			if (current != -1)
 			{ // break
-				_world.GetTileMap().EraseCell(tilePos);
-				// var cells = _world.GetNeighborCells(tilePos);
-				// _world.GetTileMap().SetCellsTerrainConnect(cells, 0, 1, false);
-				_world.UpdateNeighborCells(tilePos);
+				BreakBlock(tilePos);
 			}
 			else if (current == -1)
 			{ // place
-				_world.GetTileMap().SetCell(tilePos, 1, Vector2I.Zero);
-				//var cells = new Godot.Collections.Array<Vector2I> { tilePos };
-				// var cells = _world.GetNeighborCells(tilePos);
-				// cells.Add(tilePos);
-				// _world.GetTileMap().SetCellsTerrainConnect(cells, 0, 1, false);
-				_world.UpdateNeighborCells(tilePos);
+				PlaceBlock(tilePos, 1);
 			}
 		}
 
@@ -108,9 +112,19 @@ public partial class Player : CharacterBody2D
 		}
 	}
 
-	public void SetWorld(World world)
+
+	// ----- Other methods ----- //
+
+	private void BreakBlock(Vector2I coords)
 	{
-		_world = world;
+		_world.GetTileMap().EraseCell(coords);
+		_world.UpdateNeighborCells(coords);
 	}
 
+
+	private void PlaceBlock(Vector2I coords, int sourceId)
+	{
+		_world.GetTileMap().SetCell(coords, sourceId, Vector2I.Zero);
+		_world.UpdateNeighborCells(coords);
+	}
 }

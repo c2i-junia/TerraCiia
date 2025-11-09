@@ -1,19 +1,30 @@
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
 using Godot;
 
 public partial class World : Node2D
 {
+    // ----- Attributs ----- //
+
     private TileMapLayer _tileMap;
+    private Marker2D _spawnPoint;
+
+
+    // ----- Getters ----- //
 
     public TileMapLayer GetTileMap() { return _tileMap; }
+    public Marker2D GetSpawnPoint() { return _spawnPoint; }
+
+
+    // ----- Override Godot Methods ----- //
 
     public override void _Ready()
     {
         _tileMap = GetNode<TileMapLayer>("TileMapLayer");
+        _spawnPoint = GetNode<Marker2D>("SpawnPoint");
         FixTerrainConnections();
     }
+
+
+    // ----- Other methods ----- //
 
     private void FixTerrainConnections()
     {
@@ -21,19 +32,16 @@ public partial class World : Node2D
         if (usedCells.Count == 0)
             return;
 
-
-        // tileMap.SetCellsTerrainConnect(usedCells, 0, 0, false);
-        // tileMap.SetCellsTerrainConnect(usedCells, 0, 1, false);
-
         foreach (var cell in usedCells)
         {
             var sourceId = _tileMap.GetCellSourceId(cell);
 
             if (sourceId == -1) continue;
 
-            _tileMap.SetCellsTerrainConnect(new Godot.Collections.Array<Vector2I> { cell }, 0, sourceId, false);
+            _tileMap.SetCellsTerrainConnect([cell], 0, sourceId, false);
         }
     }
+
 
     public Godot.Collections.Array<Vector2I> GetNeighborCells(Vector2I coords)
     {
@@ -61,6 +69,7 @@ public partial class World : Node2D
 
         return neighbors;
     }
+
 
     public void UpdateNeighborCells(Vector2I coords)
     {

@@ -1,16 +1,29 @@
+using System;
 using Godot;
 
 public partial class Game : Node
 {
+	// ----- Attributs ----- //
+
+	private Player _player;
+	private World _world;
+
+
+	// ----- Override Godot Methods ----- //
+
 	public override void _Ready()
 	{
-		var player = GetNode<Player>("Player");
-		var world = GetNode<World>("World");
-		player.SetWorld(world);
+		_player = GetNode<Player>("Player");
+		_world = GetNode<World>("World");
+		_player.SetWorld(_world);
+		_player.Position = _world.GetSpawnPoint().Position;
 	}
-	
-	void OnStartGame()
+
+
+	// ----- Other methods ----- //
+
+	public void StartGame()
 	{
-		GD.Print("Hello world");
+		// Load player and world here
 	}
 }
