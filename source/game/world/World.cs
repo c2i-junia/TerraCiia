@@ -24,6 +24,40 @@ public partial class World : Node2D
     }
 
 
+    // ----- On Signal ----- //
+
+    private void OnPlayerBreakBlock(Vector2I coords, int sourceId)
+	{
+		GetTileMap().EraseCell(coords);
+		UpdateNeighborCells(coords);
+
+        if (sourceId == 1) sourceId = 0; // grass drop dirt
+        
+        PackedScene itemCollectableScene = ResourceLoader.Load<PackedScene>("res://source/game/inventory/item_collectable.tscn");
+		Item itemCollectable = ResourceLoader.Load<Item>("res://source/game/inventory/items/item_" + sourceId + ".tres");
+
+		// instantiate the collectable scene and place it at the broken tile position
+        if (itemCollectableScene != null)
+        {
+            if (itemCollectableScene.Instantiate() is ItemCollectable instance)
+            {
+                // place at tile center (convert map coords -> tilemap local -> global)
+                instance.GlobalPosition = GetTileMap().ToGlobal(GetTileMap().MapToLocal(coords));
+                instance.GetNode<Sprite2D>("Sprite2D").Texture = itemCollectable.Texture;
+				instance.SetItem(itemCollectable);
+                AddChild(instance);
+            }
+        }
+	}
+
+
+	private void OnPlayerPlaceBlock(Vector2I coords, int sourceId)
+	{
+		GetTileMap().SetCell(coords, sourceId, Vector2I.Zero);
+		UpdateNeighborCells(coords);
+	}
+
+
     // ----- Other methods ----- //
 
     private void FixTerrainConnections()

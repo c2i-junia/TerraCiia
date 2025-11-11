@@ -2,13 +2,20 @@ using Godot;
 
 public partial class InventoryUi : Control
 {
+	// ----- Attributs ----- //
+
 	private Inventory _inventory;
 	private Godot.Collections.Array<InventoryUISlot> _slots;
 
 	private bool _isOpen = false;
 
+
+	// ----- Getters ----- //
+
 	public Inventory GetInventory() { return _inventory; }
 
+
+	// ----- Override Godot Methods ----- //
 
 	public override void _Ready()
 	{
@@ -23,7 +30,7 @@ public partial class InventoryUi : Control
 		}
 
 		UpdateSlots();
-		Close();
+		Open();
 	}
 
 
@@ -34,8 +41,30 @@ public partial class InventoryUi : Control
 			if (_isOpen) Close();
 			else Open();
 		}
+
+		if (Input.IsActionJustPressed("inventory_slot+"))
+		{
+			int current = _inventory.GetSelectedSlotIndex();
+            int next = (current + 1) % _inventory.Slots.Count;
+
+            _inventory.Slots[current].Selected = false;
+            _inventory.Slots[next].Selected = true;
+            UpdateSlots();
+		}
+
+		if (Input.IsActionJustPressed("inventory_slot-"))
+		{
+			int current = _inventory.GetSelectedSlotIndex();
+            int prev = (current - 1 + _inventory.Slots.Count) % _inventory.Slots.Count; // add slotCount to avoid negative remainder
+
+            _inventory.Slots[current].Selected = false;
+            _inventory.Slots[prev].Selected = true;
+            UpdateSlots();
+		}
 	}
 
+
+	// ----- Other methods ----- //
 
 	private void Open()
 	{

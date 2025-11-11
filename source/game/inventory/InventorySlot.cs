@@ -2,6 +2,9 @@ using Godot;
 
 public partial class InventorySlot: Resource
 {
-    [Export] public Item Item;
-    [Export] public int Amount;
+    // ----- Attributs ----- //
+
+    [Export] public Item Item = null;
+    [Export] public int Amount = 0;
+    public bool Selected = false;
 }

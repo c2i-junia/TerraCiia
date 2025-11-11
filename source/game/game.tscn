@@ -10,3 +10,6 @@ script = ExtResource("1_mmx8p")
 [node name="Player" parent="." instance=ExtResource("2_e4lxu")]
 
 [node name="World" parent="." instance=ExtResource("3_bq0n3")]
+
+[connection signal="BreakBlock" from="Player" to="World" method="OnPlayerBreakBlock"]
+[connection signal="PlaceBlock" from="Player" to="World" method="OnPlayerPlaceBlock"]

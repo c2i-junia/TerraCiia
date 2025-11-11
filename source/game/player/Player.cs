@@ -2,15 +2,22 @@ using Godot;
 
 public partial class Player : CharacterBody2D
 {
+	// ----- Signal ----- //
+
+	[Signal] public delegate void BreakBlockEventHandler(Vector2I coords, int sourceId);
+	[Signal] public delegate void PlaceBlockEventHandler(Vector2I coords, int sourceId);
+
+
 	// ----- Attributs ----- //
 
 	private World _world;
 	private AnimatedSprite2D _animatedSprite2D;
+	private Inventory _inventory;
 
 	[Export] private float _speed = 300.0f;
 	[Export] private float _jumpVelocity = -400.0f;
 
-	[Export] private float _clickCooldown = 0.1f;
+	[Export] private float _clickCooldown = 0.05f;
 	private double _lastClickTime = 0;
 	[Export] private float _interactionRange = 10000f;
 
@@ -29,6 +36,7 @@ public partial class Player : CharacterBody2D
 	{
 		_animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		_animatedSprite2D.Play();
+		_inventory = GetNode<InventoryUi>("InventoryUI").GetInventory();
 	}
 
 
@@ -93,15 +101,16 @@ public partial class Player : CharacterBody2D
 				return;
 
 			Vector2I tilePos = _world.GetTileMap().LocalToMap(_world.GetTileMap().ToLocal(mouseWorldPos));
-			int current = _world.GetTileMap().GetCellSourceId(tilePos);
+			int tileId = _world.GetTileMap().GetCellSourceId(tilePos);
 
-			if (current != -1)
+			if (tileId != -1 && _inventory.GetSelectedSlot().Item == null) // TODO: replace by a tool later
 			{ // break
-				BreakBlock(tilePos);
+				EmitSignal(SignalName.BreakBlock, tilePos, tileId);
 			}
-			else if (current == -1)
+			else if (tileId == -1 && _inventory.GetSelectedSlot().Item != null && _inventory.GetSelectedSlot().Amount != 0)
 			{ // place
-				PlaceBlock(tilePos, 1);
+				EmitSignal(SignalName.PlaceBlock, tilePos, _inventory.GetSelectedSlot().Item.Id);
+				_inventory.Remove(_inventory.GetSelectedSlot().Item);
 			}
 		}
 
@@ -115,21 +124,8 @@ public partial class Player : CharacterBody2D
 
 	// ----- Other methods ----- //
 
-	private void BreakBlock(Vector2I coords)
-	{
-		_world.GetTileMap().EraseCell(coords);
-		_world.UpdateNeighborCells(coords);
-	}
-
-
-	private void PlaceBlock(Vector2I coords, int sourceId)
-	{
-		_world.GetTileMap().SetCell(coords, sourceId, Vector2I.Zero);
-		_world.UpdateNeighborCells(coords);
-	}
-
 	public void Collect(Item item)
-    {
-		GetNode<InventoryUi>("InventoryUI").GetInventory().Insert(item);
-    }
+	{
+		_inventory.Insert(item);
+	}
 }

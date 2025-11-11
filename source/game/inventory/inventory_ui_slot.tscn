@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cio0myc4hyxci"]
+[gd_scene load_steps=3 format=3 uid="uid://cio0myc4hyxci"]
 
 [ext_resource type="Script" uid="uid://cmp2jr6l3g0wu" path="res://source/game/inventory/InventoryUISlot.cs" id="1_3p5rp"]
+[ext_resource type="Texture2D" uid="uid://cea1elk2enrcn" path="res://assets/textures/selected_slot.png" id="2_icd6m"]
 
 [node name="InventoryUISlot" type="Panel"]
 custom_minimum_size = Vector2(24, 24)
@@ -37,6 +38,16 @@ offset_right = 122.0
 offset_bottom = 251.0
 scale = Vector2(0.5, 0.5)
 bbcode_enabled = true
+
+[node name="SelectedRect" type="TextureRect" parent="."]
+visible = false
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 27.0
+offset_bottom = 27.0
+texture = ExtResource("2_icd6m")
 
 [connection signal="mouse_entered" from="." to="." method="OnMouseEntered"]
 [connection signal="mouse_exited" from="." to="." method="OnMouseExited"]
