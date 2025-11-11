@@ -4,15 +4,15 @@ public partial class Player : CharacterBody2D
 {
 	// ----- Attributs ----- //
 
+	private World _world;
+	private AnimatedSprite2D _animatedSprite2D;
+
 	[Export] private float _speed = 300.0f;
 	[Export] private float _jumpVelocity = -400.0f;
 
 	[Export] private float _clickCooldown = 0.1f;
 	private double _lastClickTime = 0;
 	[Export] private float _interactionRange = 10000f;
-
-	private World _world;
-	private AnimatedSprite2D _animatedSprite2D;
 
 
 	// ----- Getters ----- //
@@ -127,4 +127,9 @@ public partial class Player : CharacterBody2D
 		_world.GetTileMap().SetCell(coords, sourceId, Vector2I.Zero);
 		_world.UpdateNeighborCells(coords);
 	}
+
+	public void Collect(Item item)
+    {
+		GetNode<InventoryUi>("InventoryUI").GetInventory().Insert(item);
+    }
 }

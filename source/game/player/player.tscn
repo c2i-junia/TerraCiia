@@ -1,7 +1,8 @@
-[gd_scene load_steps=26 format=3 uid="uid://6i56dgbkwktm"]
+[gd_scene load_steps=27 format=3 uid="uid://6i56dgbkwktm"]
 
 [ext_resource type="Script" uid="uid://b3j3bjlc88vvm" path="res://source/game/player/Player.cs" id="1_vknay"]
 [ext_resource type="Texture2D" uid="uid://da5jj60a22dd7" path="res://assets/textures/de1.png" id="2_vknay"]
+[ext_resource type="PackedScene" uid="uid://boxjqtpa7nex0" path="res://source/game/inventory/inventory_ui.tscn" id="4_2vdlt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bw7w5"]
 atlas = ExtResource("2_vknay")
@@ -183,3 +184,11 @@ animation = &"walk"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1.5, 2.5)
 shape = SubResource("RectangleShape2D_oksla")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="InventoryUI" parent="." instance=ExtResource("4_2vdlt")]
+offset_left = -559.0
+offset_top = -313.0
+offset_right = -318.0
+offset_bottom = -272.0

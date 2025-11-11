@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://bsi7faqlr7ecf"]
+
+[ext_resource type="Texture2D" uid="uid://e12qeanxu381" path="res://assets/textures/test_item.png" id="1_tmp4g"]
+[ext_resource type="Script" uid="uid://ckybu1v2ge8eb" path="res://source/game/inventory/Item.cs" id="2_2qt4w"]
+
+[resource]
+script = ExtResource("2_2qt4w")
+Name = "test"
+Texture = ExtResource("1_tmp4g")
+Description = "C juste un test aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"

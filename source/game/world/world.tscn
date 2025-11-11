@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=4 uid="uid://i25yar1itf73"]
+[gd_scene load_steps=8 format=4 uid="uid://i25yar1itf73"]
 
 [ext_resource type="Texture2D" uid="uid://c2xmvhph6d3n5" path="res://assets/textures/501d3e00268b54fd7df838404e7b9359b849f2cd.png" id="1_vfs74"]
 [ext_resource type="Script" uid="uid://dgnm6crq88a86" path="res://source/game/world/World.cs" id="1_vi8q7"]
 [ext_resource type="Texture2D" uid="uid://cf0as3vqvmspg" path="res://assets/textures/977d5e660f3891ae1603f174152f287283c63600.png" id="3_vby51"]
+[ext_resource type="PackedScene" uid="uid://dfg5cvc06v5uk" path="res://source/game/inventory/item_collectable.tscn" id="4_scei7"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vi8q7"]
 resource_name = "grass"
@@ -2675,3 +2676,30 @@ tile_set = SubResource("TileSet_vby51")
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(540, 176)
 gizmo_extents = 0.0
+
+[node name="ItemCollectable" parent="." instance=ExtResource("4_scei7")]
+position = Vector2(873, 184)
+
+[node name="ItemCollectable2" parent="." instance=ExtResource("4_scei7")]
+position = Vector2(200, 245)
+
+[node name="ItemCollectable3" parent="." instance=ExtResource("4_scei7")]
+position = Vector2(116, 205)
+
+[node name="ItemCollectable4" parent="." instance=ExtResource("4_scei7")]
+position = Vector2(818, 103)
+
+[node name="ItemCollectable5" parent="." instance=ExtResource("4_scei7")]
+position = Vector2(277, 213)
+
+[node name="ItemCollectable6" parent="." instance=ExtResource("4_scei7")]
+position = Vector2(92, 148)
+
+[node name="ItemCollectable7" parent="." instance=ExtResource("4_scei7")]
+position = Vector2(295, 131)
+
+[node name="ItemCollectable8" parent="." instance=ExtResource("4_scei7")]
+position = Vector2(205, -440)
+
+[node name="ItemCollectable9" parent="." instance=ExtResource("4_scei7")]
+position = Vector2(446, 129)
