@@ -11,7 +11,8 @@ public partial class Player : CharacterBody2D
 	// ----- Attributs ----- //
 
 	private World _world;
-	private AnimatedSprite2D _animatedSprite2D;
+	private AnimatedSprite2D _legsSprite;
+	private AnimatedSprite2D _bodySprite;
 	private Inventory _inventory;
 
 	[Export] private float _speed = 300.0f;
@@ -20,6 +21,9 @@ public partial class Player : CharacterBody2D
 	[Export] private float _clickCooldown = 0.05f;
 	private double _lastClickTime = 0;
 	[Export] private float _interactionRange = 10000f;
+
+	private Vector2 _direction = Vector2.Zero;
+	private bool _isUsing = false;
 
 
 	// ----- Getters ----- //
@@ -34,9 +38,17 @@ public partial class Player : CharacterBody2D
 
 	public override void _Ready()
 	{
-		_animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-		_animatedSprite2D.Play();
+		_legsSprite = GetNode<AnimatedSprite2D>("LegsSprite");
+		_bodySprite = GetNode<AnimatedSprite2D>("BodySprite");
+		_bodySprite.Play();
+		_legsSprite.Play();
 		_inventory = GetNode<InventoryUi>("InventoryUI").GetInventory();
+
+		_bodySprite.AnimationFinished += () =>
+		{
+			if (_bodySprite.Animation == "use")
+				_isUsing = false;
+		};
 	}
 
 
@@ -57,30 +69,28 @@ public partial class Player : CharacterBody2D
 		}
 
 		// Get the input direction and handle the movement/deceleration.
-		var direction = Vector2.Zero;
+		_direction = Vector2.Zero;
 		if (Input.IsActionPressed("right"))
 		{
-			direction.X += 1;
+			_direction.X += 1;
 		}
 		if (Input.IsActionPressed("left"))
 		{
-			direction.X -= 1;
+			_direction.X -= 1;
 		}
 
-		if (direction != Vector2.Zero)
+		if (_direction != Vector2.Zero)
 		{
-			velocity.X = direction.X * _speed;
-			_animatedSprite2D.Animation = "walk";
-			_animatedSprite2D.FlipH = velocity.X < 0;
+			velocity.X = _direction.X * _speed;
 		}
 		else
 		{
 			velocity.X = Mathf.MoveToward(Velocity.X, 0, _speed);
-			_animatedSprite2D.Animation = "idle";
 		}
 
 
 		Velocity = velocity;
+		ProcessAnimation();
 		MoveAndSlide();
 	}
 
@@ -90,6 +100,12 @@ public partial class Player : CharacterBody2D
 		// Handle use
 		if (Input.IsActionPressed("use"))
 		{
+			if (!_isUsing)
+			{
+				_isUsing = true;
+				_bodySprite.Play("use");
+			}
+
 			if (Time.GetTicksMsec() - _lastClickTime < _clickCooldown * 1000) return;
 			_lastClickTime = Time.GetTicksMsec();
 
@@ -103,11 +119,11 @@ public partial class Player : CharacterBody2D
 			Vector2I tilePos = _world.GetTileMap().LocalToMap(_world.GetTileMap().ToLocal(mouseWorldPos));
 			int tileId = _world.GetTileMap().GetCellSourceId(tilePos);
 
-			if (tileId != -1 && _inventory.GetSelectedSlot().Item == null) // TODO: replace by a tool later
+			if (tileId != -1 && _inventory.GetSelectedSlot().Item != null && _inventory.GetSelectedSlot().Item.Type == "tool")
 			{ // break
 				EmitSignal(SignalName.BreakBlock, tilePos, tileId);
 			}
-			else if (tileId == -1 && _inventory.GetSelectedSlot().Item != null && _inventory.GetSelectedSlot().Amount != 0)
+			else if (tileId == -1 && _inventory.GetSelectedSlot().Item != null && _inventory.GetSelectedSlot().Item.Type == "placeable" && _inventory.GetSelectedSlot().Amount != 0)
 			{ // place
 				EmitSignal(SignalName.PlaceBlock, tilePos, _inventory.GetSelectedSlot().Item.Id);
 				_inventory.Remove(_inventory.GetSelectedSlot().Item);
@@ -123,6 +139,45 @@ public partial class Player : CharacterBody2D
 
 
 	// ----- Other methods ----- //
+
+	public void ProcessAnimation()
+	{
+		// jump
+		if (!IsOnFloor())
+		{
+			if (!_isUsing)
+			{
+				_bodySprite.Animation = "jump";
+			}
+			_legsSprite.Animation = "jump";
+		}
+		// walk
+		else if (_direction != Vector2.Zero)
+		{
+			if (!_isUsing)
+			{
+				_bodySprite.Animation = "walk";
+			}
+			_legsSprite.Animation = "walk";
+		}
+		// idle
+		else
+		{
+			if (!_isUsing)
+			{
+				_bodySprite.Animation = "idle";
+			}
+			_legsSprite.Animation = "idle";
+		}
+
+		// flip direction
+		if (_direction != Vector2.Zero)
+		{
+			_bodySprite.FlipH = _direction.X < 0;
+			_legsSprite.FlipH = _direction.X < 0;
+		}
+	}
+
 
 	public void Collect(Item item)
 	{

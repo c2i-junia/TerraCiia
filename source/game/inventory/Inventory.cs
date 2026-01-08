@@ -26,6 +26,11 @@ public partial class Inventory : Resource
             Slots.Add(new InventorySlot());
         }
         Slots[0].Selected = true;
+
+        Item item = ResourceLoader.Load<Item>("res://source/game/inventory/items/item_" + 100 + ".tres");
+        Insert(item);
+        item = ResourceLoader.Load<Item>("res://source/game/inventory/items/item_" + 101 + ".tres");
+        Insert(item);
     }
 
 

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://birp0bmk8qcn0"]
+
+[ext_resource type="Texture2D" uid="uid://dg8sqe416d1bn" path="res://assets/textures/wooden_tools2.png" id="1_3piyc"]
+[ext_resource type="Script" uid="uid://ckybu1v2ge8eb" path="res://source/game/inventory/Item.cs" id="2_8uuhr"]
+
+[resource]
+script = ExtResource("2_8uuhr")
+Id = 101
+Name = "Wooden pickaxe"
+Texture = ExtResource("1_3piyc")
+Description = "Default pickaxe"
+Type = "tool"

@@ -19,6 +19,8 @@ public partial class InventoryUISlot : Panel
 		_amount = GetNode<Label>("Amount");
 		_description = GetNode<RichTextLabel>("Description");
 		_selectedRect = GetNode<TextureRect>("SelectedRect");
+
+		_description.Visible = false;
 	}
 
 	// ----- On Signal ----- //
@@ -44,6 +46,7 @@ public partial class InventoryUISlot : Panel
 		{
 			_itemDisplay.Visible = true;
 			if (slot.Amount > 1) _amount.Visible = true;
+			else _amount.Visible = false;
 
 			_itemDisplay.Texture = slot.Item.Texture;
 			_amount.Text = slot.Amount.ToString();
