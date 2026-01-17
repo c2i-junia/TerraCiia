@@ -10,6 +10,19 @@ public partial class InventoryUISlot : Panel
 	private RichTextLabel _description;
 	private TextureRect _selectedRect;
 
+	private int _index;
+
+	public event Action<int> LeftClicked;
+	public event Action<int> RightClicked;
+
+
+	// ----- Setters ----- //
+
+	public void SetIndex(int index)
+	{
+		_index = index;
+	}
+
 
 	// ----- Override Godot Methods ----- //
 
@@ -22,6 +35,24 @@ public partial class InventoryUISlot : Panel
 
 		_description.Visible = false;
 	}
+
+
+	public override void _GuiInput(InputEvent @event)
+	{
+		if (@event is InputEventMouseButton mb)
+		{
+			if (mb.ButtonIndex == MouseButton.Left && mb.Pressed)
+			{
+				LeftClicked?.Invoke(_index);
+			}
+			if (mb.ButtonIndex == MouseButton.Right && mb.Pressed)
+			{
+				RightClicked?.Invoke(_index);
+			}
+			_description.Visible = false;
+		}
+	}
+
 
 	// ----- On Signal ----- //
 
@@ -51,15 +82,20 @@ public partial class InventoryUISlot : Panel
 			_itemDisplay.Texture = slot.Item.Texture;
 			_amount.Text = slot.Amount.ToString();
 
-			_description.Text = slot.Item.Name + "\n" + slot.Item.Description;
+			var raw = slot.Item.Name + "\n" + slot.Item.Description;
+			_description.Text = System.Text.RegularExpressions.Regex.Unescape(raw);
 		}
 		else
 		{
 			_itemDisplay.Visible = false;
 			_amount.Visible = false;
 			_description.Visible = false;
+
+			_itemDisplay.Texture = null;
+			_amount.Text = "0";
+			_description.Text = "";
 		}
-		
+
 		_selectedRect.Visible = slot.Selected;
 	}
 }

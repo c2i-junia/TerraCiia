@@ -7,6 +7,6 @@ public partial class Item: Resource
     [Export] public int Id;
     [Export] public string Name;
     [Export] public Texture2D Texture;
-    [Export] public string Description;
+    [Export(PropertyHint.MultilineText)] public string Description;
     [Export] public string Type;
 }

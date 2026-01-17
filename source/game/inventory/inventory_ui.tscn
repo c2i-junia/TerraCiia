@@ -1,63 +1,211 @@
 [gd_scene load_steps=4 format=3 uid="uid://boxjqtpa7nex0"]
 
 [ext_resource type="Script" uid="uid://b0tp78ladk3hs" path="res://source/game/inventory/InventoryUi.cs" id="1_qbnsy"]
-[ext_resource type="Texture2D" uid="uid://3t6sfkh0pg0m" path="res://assets/textures/inventory_background.png" id="2_ruolw"]
 [ext_resource type="PackedScene" uid="uid://cio0myc4hyxci" path="res://source/game/inventory/inventory_ui_slot.tscn" id="3_ev78o"]
+[ext_resource type="Texture2D" uid="uid://dj6icok4534p2" path="res://assets/textures/wooden_tools1.png" id="3_ispg0"]
 
 [node name="InventoryUI" type="Control"]
 custom_minimum_size = Vector2(168, 32)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -912.0
-offset_bottom = -608.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_right = 295.0
+offset_bottom = 146.5
+scale = Vector2(2, 2)
 script = ExtResource("1_qbnsy")
 
-[node name="NinePatchRect" type="NinePatchRect" parent="."]
-layout_mode = 0
-offset_right = 240.0
-offset_bottom = 40.0
-texture = ExtResource("2_ruolw")
-region_rect = Rect2(20, 22, 60, 61)
-
-[node name="GridContainer" type="GridContainer" parent="NinePatchRect"]
+[node name="HotbarSlots" type="GridContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -78.0
-offset_top = -8.0
-offset_right = 78.0
-offset_bottom = 8.0
+offset_left = -138.0
+offset_right = 138.0
+offset_bottom = 24.0
 grow_horizontal = 2
-grow_vertical = 2
-columns = 8
+columns = 10
 
-[node name="InventoryUISlot0" parent="NinePatchRect/GridContainer" instance=ExtResource("3_ev78o")]
+[node name="InventoryUISlot0" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
 layout_mode = 2
 
-[node name="InventoryUISlot1" parent="NinePatchRect/GridContainer" instance=ExtResource("3_ev78o")]
+[node name="InventoryUISlot1" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
 layout_mode = 2
 
-[node name="InventoryUISlot2" parent="NinePatchRect/GridContainer" instance=ExtResource("3_ev78o")]
+[node name="InventoryUISlot2" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
 layout_mode = 2
 
-[node name="InventoryUISlot3" parent="NinePatchRect/GridContainer" instance=ExtResource("3_ev78o")]
+[node name="InventoryUISlot3" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
 layout_mode = 2
 
-[node name="InventoryUISlot4" parent="NinePatchRect/GridContainer" instance=ExtResource("3_ev78o")]
+[node name="InventoryUISlot4" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
 layout_mode = 2
 
-[node name="InventoryUISlot5" parent="NinePatchRect/GridContainer" instance=ExtResource("3_ev78o")]
+[node name="InventoryUISlot5" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
 layout_mode = 2
 
-[node name="InventoryUISlot6" parent="NinePatchRect/GridContainer" instance=ExtResource("3_ev78o")]
+[node name="InventoryUISlot6" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
 layout_mode = 2
 
-[node name="InventoryUISlot7" parent="NinePatchRect/GridContainer" instance=ExtResource("3_ev78o")]
+[node name="InventoryUISlot7" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
 layout_mode = 2
+
+[node name="InventoryUISlot8" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot9" parent="HotbarSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="OtherSlots" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -138.0
+offset_top = -24.0
+offset_right = 138.0
+grow_horizontal = 2
+grow_vertical = 0
+columns = 10
+
+[node name="InventoryUISlot0" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot1" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot2" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot3" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot4" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot5" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot6" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot7" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot8" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot9" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot10" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot11" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot12" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot13" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot14" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot15" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot16" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot17" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot18" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot19" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot20" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot21" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot22" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot23" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot24" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot25" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot26" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot27" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot28" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot29" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot30" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot31" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot32" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot33" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot34" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot35" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot36" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot37" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot38" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="InventoryUISlot39" parent="OtherSlots" instance=ExtResource("3_ev78o")]
+layout_mode = 2
+
+[node name="HeldItemDisplay" type="Sprite2D" parent="."]
+position = Vector2(340, 77)
+texture = ExtResource("3_ispg0")
+
+[node name="Amount" type="Label" parent="HeldItemDisplay"]
+custom_minimum_size = Vector2(37, 23)
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -22.5
+offset_top = -8.0
+offset_right = 14.5
+offset_bottom = 15.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 16
+text = "9999"
+horizontal_alignment = 2
