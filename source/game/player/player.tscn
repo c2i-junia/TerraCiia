@@ -341,6 +341,7 @@ animations = [{
 size = Vector2(28, 47)
 
 [node name="Player" type="CharacterBody2D"]
+z_index = 1
 script = ExtResource("1_vknay")
 
 [node name="LegsSprite" type="AnimatedSprite2D" parent="."]

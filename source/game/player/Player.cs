@@ -4,7 +4,7 @@ public partial class Player : CharacterBody2D
 {
 	// ----- Signal ----- //
 
-	[Signal] public delegate void BreakBlockEventHandler(Vector2I coords, int sourceId);
+	[Signal] public delegate void BreakBlockEventHandler(Vector2I coords);
 	[Signal] public delegate void PlaceBlockEventHandler(Vector2I coords, int sourceId);
 
 
@@ -119,13 +119,13 @@ public partial class Player : CharacterBody2D
 			Vector2I tilePos = _world.GetTileMap().LocalToMap(_world.GetTileMap().ToLocal(mouseWorldPos));
 			int tileId = _world.GetTileMap().GetCellSourceId(tilePos);
 
-			if (tileId != -1 && _inventory.GetSelectedSlot().Item != null && _inventory.GetSelectedSlot().Item.Type == "tool")
+			if (tileId != -1 && _inventory.GetSelectedSlot().Item != null && _inventory.GetSelectedSlot().Item.Type == ItemType.Tool)
 			{ // break
-				EmitSignal(SignalName.BreakBlock, tilePos, tileId);
+				EmitSignal(SignalName.BreakBlock, tilePos);
 			}
-			else if (tileId == -1 && _inventory.GetSelectedSlot().Item != null && _inventory.GetSelectedSlot().Item.Type == "placeable" && _inventory.GetSelectedSlot().Amount != 0)
+			else if (tileId == -1 && _inventory.GetSelectedSlot().Item != null && _inventory.GetSelectedSlot().Item.Type == ItemType.Placeable && _inventory.GetSelectedSlot().Amount != 0)
 			{ // place
-				EmitSignal(SignalName.PlaceBlock, tilePos, _inventory.GetSelectedSlot().Item.Id);
+				EmitSignal(SignalName.PlaceBlock, tilePos, _inventory.GetSelectedSlot().Item.TileId);
 				_inventory.Remove(_inventory.GetSelectedSlot().Item);
 			}
 		}

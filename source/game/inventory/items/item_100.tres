@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=3 format=3 uid="uid://7skk4o0kd1xs"]
+[gd_resource type="Resource" script_class="Item" load_steps=3 format=3 uid="uid://7skk4o0kd1xs"]
 
 [ext_resource type="Texture2D" uid="uid://dj6icok4534p2" path="res://assets/textures/wooden_tools1.png" id="1_jt1ut"]
 [ext_resource type="Script" uid="uid://ckybu1v2ge8eb" path="res://source/game/inventory/Item.cs" id="2_um1lu"]
@@ -11,4 +11,4 @@ Texture = ExtResource("1_jt1ut")
 Description = "Default sword
 Atk: unknow
 Speed: unknow"
-Type = "weapon"
+Type = 2
