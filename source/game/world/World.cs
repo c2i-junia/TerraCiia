@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Godot;
 
 public partial class World : Node2D
@@ -10,6 +11,11 @@ public partial class World : Node2D
     private TileMapLayer _tileMap;
     private Marker2D _spawnPoint;
 
+    private RandomNumberGenerator _rng;
+
+    [Export] private int _seed = 0; // TO choose/randomize later in menu
+
+    [Export] private FastNoiseLite _noise;
 
     // ----- Getters ----- //
 
@@ -21,14 +27,10 @@ public partial class World : Node2D
 
     public override void _Ready()
     {
-        GD.Seed(1); // TO choose/randomize later in menu
-
         _tileMap = GetNode<TileMapLayer>("TileMapLayer");
         _spawnPoint = GetNode<Marker2D>("SpawnPoint");
 
-        PlaceRandomTreesOnSurface(4);
-
-        FixTerrainConnections();
+        GenerateWorld(_seed);
     }
 
 
@@ -67,99 +69,53 @@ public partial class World : Node2D
     }
 
 
-    // ----- Other methods ----- //
+    // ----- Procedural Generation ----- //
 
-    private bool TryGetCellTerrain(Vector2I coords, out int terrainSet, out int terrain)
+    public void GenerateWorld(int seed)
     {
-        terrainSet = -1;
-        terrain = -1;
+        _rng = new RandomNumberGenerator { Seed = (ulong)seed };
 
-        TileData tileData = _tileMap.GetCellTileData(coords);
-        if (tileData == null)
-            return false;
+        _noise.Seed = seed; // The other params are chosen in the Godot inspector
 
-        terrainSet = tileData.TerrainSet;
-        terrain = tileData.Terrain;
-        return terrainSet >= 0 && terrain >= 0;
-    }
+        int worldWidth = 2000;  // World width
+        int groundLevel = 50;  // Average Y position for the surface
+        int amplitude = 20;    // Max height of hills
 
+        // link terrain id to coords
+        var terrainGroups = new System.Collections.Generic.Dictionary<int, Godot.Collections.Array<Vector2I>>();
 
-    private Item TryGetDropItem(TileData tileData)
-    {
-        // explicit resource path stored in TileSet custom data.
-        if (tileData != null)
+        // build world reliefs
+        _tileMap.Clear();
+        for (int x = -worldWidth / 2; x < worldWidth / 2; x++)
         {
-            Variant dropPathVariant = tileData.GetCustomData(_dropItemPathKey);
-            if (dropPathVariant.VariantType == Variant.Type.String)
+            // Retrieve a value between -1.0 and 1.0
+            float noiseValue = _noise.GetNoise1D(x);
+            // Convert in Y coords
+            int surfaceY = groundLevel + Mathf.RoundToInt(noiseValue * amplitude);
+
+            // Fill from bottom to surface
+            for (int y = surfaceY; y < groundLevel + amplitude + 10; y++)
             {
-                string dropPath = dropPathVariant.AsString();
-                if (!string.IsNullOrWhiteSpace(dropPath) && ResourceLoader.Exists(dropPath))
-                    return ResourceLoader.Load<Item>(dropPath);
+                Vector2I coords = new(x, y);
+                int sourceId = (y == surfaceY) ? 1 : 0; // 1 for grass, 0 for dirt
+                _tileMap.SetCell(coords, sourceId, Vector2I.Zero);
+                TryGetCellTerrain(coords, out int terrainSet, out int terrainId);
+
+                // add to dictionary for connexion
+                if (!terrainGroups.ContainsKey(terrainId))
+                    terrainGroups[terrainId] = new Godot.Collections.Array<Vector2I>();
+                terrainGroups[terrainId].Add(coords);
             }
         }
 
-        return null;
-    }
-
-
-    private void FixTerrainConnections()
-    {
-        var usedCells = _tileMap.GetUsedCells();
-        if (usedCells.Count == 0)
-            return;
-
-        foreach (var cell in usedCells)
+        // Apply connexion between tiles
+        foreach (var (terrainId, cells) in terrainGroups)
         {
-            if (TryGetCellTerrain(cell, out int terrainSet, out int terrain))
-            {
-                _tileMap.SetCellsTerrainConnect([cell], terrainSet, terrain, false);
-            }
-        }
-    }
-
-
-    public Godot.Collections.Array<Vector2I> GetNeighborCells(Vector2I coords)
-    {
-        var neighbors = new Godot.Collections.Array<Vector2I>();
-
-        var neighborTypes = new TileSet.CellNeighbor[] {
-            TileSet.CellNeighbor.TopLeftCorner,
-            TileSet.CellNeighbor.TopSide,
-            TileSet.CellNeighbor.TopRightCorner,
-            TileSet.CellNeighbor.RightSide,
-            TileSet.CellNeighbor.LeftSide,
-            TileSet.CellNeighbor.BottomLeftCorner,
-            TileSet.CellNeighbor.BottomSide,
-            TileSet.CellNeighbor.BottomRightCorner
-        };
-
-        foreach (var nt in neighborTypes)
-        {
-            var n = _tileMap.GetNeighborCell(coords, nt);
-            if (_tileMap.GetCellSourceId(n) != -1)
-            {
-                neighbors.Add(n);
-            }
+            _tileMap.SetCellsTerrainConnect(cells, 0, terrainId);
         }
 
-        return neighbors;
-    }
-
-
-    public void UpdateNeighborCells(Vector2I coords)
-    {
-        var neighbors = GetNeighborCells(coords);
-        neighbors.Add(coords);
-        if (neighbors.Count == 0)
-            return;
-
-        foreach (var n in neighbors)
-        {
-            if (TryGetCellTerrain(n, out int terrainSet, out int terrain))
-            {
-                _tileMap.SetCellsTerrainConnect([n], terrainSet, terrain, false);
-            }
-        }
+        // Place Tree
+        PlaceRandomTreesOnSurface();
     }
 
 
@@ -168,7 +124,7 @@ public partial class World : Node2D
         if (_tileMap.GetCellSourceId(coords) != -1)
             return;
 
-        int height = (int)(GD.Randi() % 5) + 5;
+        int height = _rng.RandiRange(5, 9);
         Vector2I currentTile = coords;
 
         // on grass
@@ -221,15 +177,13 @@ public partial class World : Node2D
             return;
 
         // random possibility to place a tree, with a min space between each one
-        var rng = new RandomNumberGenerator { Seed = GD.Randi() };
-
         var chosen = new Godot.Collections.Array<Vector2I>();
 
-        for (int i = 0; i<surfaceSpots.Count;i++) 
+        for (int i = 0; i < surfaceSpots.Count; i++)
         {
             Vector2I candidate = surfaceSpots[i];
 
-            int luck = rng.RandiRange(0, 4);
+            int luck = _rng.RandiRange(0, 4);
             if (luck == 0) // 1 in 5
             {
                 chosen.Add(candidate);
@@ -240,5 +194,85 @@ public partial class World : Node2D
         // Spawn
         foreach (var spot in chosen)
             SpawnTree(spot);
+    }
+
+
+    // ----- Other methods ----- //
+
+    private bool TryGetCellTerrain(Vector2I coords, out int terrainSet, out int terrain)
+    {
+        terrainSet = -1;
+        terrain = -1;
+
+        TileData tileData = _tileMap.GetCellTileData(coords);
+        if (tileData == null)
+            return false;
+
+        terrainSet = tileData.TerrainSet;
+        terrain = tileData.Terrain;
+        return terrainSet >= 0 && terrain >= 0;
+    }
+
+
+    private Item TryGetDropItem(TileData tileData)
+    {
+        // explicit resource path stored in TileSet custom data.
+        if (tileData != null)
+        {
+            Variant dropPathVariant = tileData.GetCustomData(_dropItemPathKey);
+            if (dropPathVariant.VariantType == Variant.Type.String)
+            {
+                string dropPath = dropPathVariant.AsString();
+                if (!string.IsNullOrWhiteSpace(dropPath) && ResourceLoader.Exists(dropPath))
+                    return ResourceLoader.Load<Item>(dropPath);
+            }
+        }
+
+        return null;
+    }
+
+
+    public Godot.Collections.Array<Vector2I> GetNeighborCells(Vector2I coords)
+    {
+        var neighbors = new Godot.Collections.Array<Vector2I>();
+
+        var neighborTypes = new TileSet.CellNeighbor[] {
+            TileSet.CellNeighbor.TopLeftCorner,
+            TileSet.CellNeighbor.TopSide,
+            TileSet.CellNeighbor.TopRightCorner,
+            TileSet.CellNeighbor.RightSide,
+            TileSet.CellNeighbor.LeftSide,
+            TileSet.CellNeighbor.BottomLeftCorner,
+            TileSet.CellNeighbor.BottomSide,
+            TileSet.CellNeighbor.BottomRightCorner
+        };
+
+        foreach (var nt in neighborTypes)
+        {
+            var n = _tileMap.GetNeighborCell(coords, nt);
+            if (_tileMap.GetCellSourceId(n) != -1)
+            {
+                neighbors.Add(n);
+            }
+        }
+
+        return neighbors;
+    }
+
+
+    public void UpdateNeighborCells(Vector2I coords)
+    {
+        var neighbors = GetNeighborCells(coords);
+        neighbors.Add(coords);
+        if (neighbors.Count == 0)
+            return;
+
+        foreach (var n in neighbors)
+        {
+            if (TryGetCellTerrain(n, out int terrainSet, out int terrain))
+            {
+                _tileMap.SetCellsTerrainConnect([n], terrainSet, terrain, false);
+            }
+        }
     }
 }
