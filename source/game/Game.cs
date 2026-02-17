@@ -16,7 +16,9 @@ public partial class Game : Node
 		_player = GetNode<Player>("Player");
 		_world = GetNode<World>("World");
 		_player.SetWorld(_world);
+		_player.SetInventory(GetNode<InventoryUi>("HUD/InventoryUI").GetInventory());
 		_player.Position = _world.GetSpawnPoint().Position;
+		_player.SetMovementLimits(_world.GetTileMap().GetUsedRect(), _world.GetTileMap().TileSet.TileSize);
 	}
 
 

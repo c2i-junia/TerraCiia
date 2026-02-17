@@ -25,6 +25,11 @@ public partial class Player : CharacterBody2D
 	private Vector2 _direction = Vector2.Zero;
 	private bool _isUsing = false;
 
+	private float _limitLeft = float.MinValue;
+	private float _limitRight = float.MaxValue;
+	private float _limitTop = float.MinValue;
+	private float _limitBottom = float.MaxValue;
+
 
 	// ----- Getters ----- //
 
@@ -32,6 +37,24 @@ public partial class Player : CharacterBody2D
 	// ----- Setters ----- //
 
 	public void SetWorld(World world) { _world = world; }
+
+	public void SetInventory(Inventory inventory) { _inventory = inventory; }
+
+	public void SetMovementLimits(Rect2I usedRect, Vector2I tileSize)
+	{
+		// convert tilemap coord in pixels
+		_limitLeft = usedRect.Position.X * tileSize.X;
+		_limitRight = (usedRect.Position.X + usedRect.Size.X) * tileSize.X;
+		_limitTop = usedRect.Position.Y * tileSize.Y;
+		_limitBottom = (usedRect.Position.Y + usedRect.Size.Y) * tileSize.Y;
+
+		// also set the cam limits
+		Camera2D cam = GetNode<Camera2D>("Camera2D");
+		cam.LimitLeft = (int)_limitLeft;
+		cam.LimitRight = (int)_limitRight;
+		cam.LimitTop = (int)_limitTop;
+		cam.LimitBottom = (int)_limitBottom;
+	}
 
 
 	// ----- Override Godot Methods ----- //
@@ -42,7 +65,6 @@ public partial class Player : CharacterBody2D
 		_bodySprite = GetNode<AnimatedSprite2D>("BodySprite");
 		_bodySprite.Play();
 		_legsSprite.Play();
-		_inventory = GetNode<InventoryUi>("InventoryUI").GetInventory();
 
 		_bodySprite.AnimationFinished += () =>
 		{
@@ -92,6 +114,12 @@ public partial class Player : CharacterBody2D
 		Velocity = velocity;
 		ProcessAnimation();
 		MoveAndSlide();
+
+		// don't go outside
+		Vector2 pos = GlobalPosition;
+		pos.X = Mathf.Clamp(pos.X, _limitLeft, _limitRight);
+		pos.Y = Mathf.Clamp(pos.Y, _limitTop, _limitBottom);
+		GlobalPosition = pos;
 	}
 
 

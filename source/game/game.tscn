@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://d4c6hqjdqxhqd"]
+[gd_scene load_steps=5 format=3 uid="uid://d4c6hqjdqxhqd"]
 
 [ext_resource type="Script" uid="uid://dkucb7v8de0ct" path="res://source/game/Game.cs" id="1_mmx8p"]
 [ext_resource type="PackedScene" uid="uid://6i56dgbkwktm" path="res://source/game/player/player.tscn" id="2_e4lxu"]
 [ext_resource type="PackedScene" uid="uid://i25yar1itf73" path="res://source/game/world/world.tscn" id="3_bq0n3"]
+[ext_resource type="PackedScene" uid="uid://boxjqtpa7nex0" path="res://source/game/inventory/inventory_ui.tscn" id="4_qpkag"]
 
 [node name="Game" type="Node"]
 script = ExtResource("1_mmx8p")
@@ -10,6 +11,14 @@ script = ExtResource("1_mmx8p")
 [node name="Player" parent="." instance=ExtResource("2_e4lxu")]
 
 [node name="World" parent="." instance=ExtResource("3_bq0n3")]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="InventoryUI" parent="HUD" instance=ExtResource("4_qpkag")]
+offset_left = 20.0
+offset_top = 23.0
+offset_right = 315.0
+offset_bottom = 169.5
 
 [connection signal="BreakBlock" from="Player" to="World" method="OnPlayerBreakBlock"]
 [connection signal="PlaceBlock" from="Player" to="World" method="OnPlayerPlaceBlock"]

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Item" load_steps=3 format=3 uid="uid://bf04yir6urxtt"]
 
-[ext_resource type="Texture2D" uid="uid://67ak6r4pkhik" path="res://assets/textures/tree_log.png" id="1_t1ow7"]
+[ext_resource type="Texture2D" uid="uid://smehqjlp4ked" path="res://assets/textures/wood.png" id="1_t1ow7"]
 [ext_resource type="Script" uid="uid://ckybu1v2ge8eb" path="res://source/game/inventory/Item.cs" id="2_6b3kg"]
 
 [resource]
