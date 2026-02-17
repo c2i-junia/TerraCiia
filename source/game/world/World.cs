@@ -17,11 +17,13 @@ public partial class World : Node2D
     [Export] private int _bottomLevel = 200; // Bottom of the world
     [Export] private int _groundLevel = -50;  // Average Y position for the surface
     [Export] private int _amplitude = 20;    // Max height of hills
+    [Export] private float _caveThreshold = -0.4f; // Value to set cave size ?
 
     [Export] private int _stoneStartingLevel = 0; // Starting height for stone
     [Export] private int _transitionSize = 30; // transition zone between dirt and stone
 
-    [Export] private FastNoiseLite _noise;
+    [Export] private FastNoiseLite _heightNoise;
+    [Export] private FastNoiseLite _caveNoise;
 
     // ----- Getters ----- //
 
@@ -82,7 +84,8 @@ public partial class World : Node2D
     {
         _rng = new RandomNumberGenerator { Seed = (ulong)seed };
 
-        _noise.Seed = seed; // The other params are chosen in the Godot inspector
+        _heightNoise.Seed = seed; // The other params are chosen in the Godot inspector
+        _caveNoise.Seed = seed + 111;
 
         // link terrain id to coords
         var terrainGroups = new System.Collections.Generic.Dictionary<int, Godot.Collections.Array<Vector2I>>();
@@ -92,13 +95,21 @@ public partial class World : Node2D
         for (int x = -_worldWidth / 2; x < _worldWidth / 2; x++)
         {
             // Retrieve a value between -1.0 and 1.0
-            float heightValue = _noise.GetNoise1D(x);
+            float heightValue = _heightNoise.GetNoise1D(x);
             // Convert in Y coords
             int surfaceY = _groundLevel + Mathf.RoundToInt(heightValue * _amplitude);
 
             // Fill from bottom to surface
             for (int y = surfaceY; y < _bottomLevel; y++)
             {
+                float caveValue = _caveNoise.GetNoise2D(x, y);
+
+                if (caveValue > _caveThreshold)
+                {
+                    // do nothing to add caves.
+                    continue;
+                }
+
                 Vector2I coords = new(x, y);
                 int sourceId;
                 if (y == surfaceY) sourceId = 1; // grass
@@ -108,7 +119,7 @@ public partial class World : Node2D
                     float stoneChance = Mathf.Clamp((float)(y - _stoneStartingLevel) / _transitionSize, 0, 1);
 
                     // Add a 2D noise to add random spot
-                    float stoneNoise = _noise.GetNoise2D(x * 2.0f, y * 2.0f);
+                    float stoneNoise = _heightNoise.GetNoise2D(x * 2.0f, y * 2.0f);
                     if (stoneNoise + stoneChance > 0.6f)
                         sourceId = 2; // Stone
                     else
